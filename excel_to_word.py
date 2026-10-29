@@ -129,6 +129,7 @@ def write_docx(path, groups):
 def main():
     parser = argparse.ArgumentParser(description="将已核对的 Excel 按日期和样线转为 Word 样线数据表")
     parser.add_argument("excel", help="Excel 文件路径，可用 Windows 或 WSL 路径")
+    parser.add_argument("--output-dir", help="可选：把 Word 放入指定的已有输出目录")
     args = parser.parse_args()
     source = normalize_path(args.excel)
     if not source.is_file() or source.suffix.lower() != ".xlsx":
@@ -141,12 +142,16 @@ def main():
     groups = OrderedDict()
     for row in records:
         groups.setdefault((row.get("日期", ""), row.get("样线", "")), []).append(row)
-    output_dir = HERE / "outputs" / (re.sub(r"[^\w\u4e00-\u9fff-]", "_", source.stem)[:60]
+    output_dir = normalize_path(args.output_dir) if args.output_dir else HERE / "outputs" / (
+        re.sub(r"[^\w\u4e00-\u9fff-]", "_", source.stem)[:60]
         + "_Word_" + datetime.now().strftime("%Y%m%d_%H%M%S_%f"))
-    output_dir.mkdir(parents=True)
+    output_dir.mkdir(parents=True, exist_ok=bool(args.output_dir))
     target = output_dir / "鸟类样线数据表_待核对.docx"
+    if target.exists():
+        parser.error("Word 输出文件已存在，拒绝覆盖")
     write_docx(target, groups)
-    (output_dir / "处理记录.json").write_text(json.dumps({"input": str(source.resolve()),
+    manifest = output_dir / ("Word处理记录.json" if args.output_dir else "处理记录.json")
+    manifest.write_text(json.dumps({"input": str(source.resolve()),
         "input_sha256": sha(source), "output": str(target), "groups": len(groups),
         "rows": len(records), "rule": "按日期和样线分组；未知元数据留待填写；原始 Excel 不修改"},
         ensure_ascii=False, indent=2), encoding="utf-8")
