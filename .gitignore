@@ -1,0 +1,12 @@
+outputs/
+__pycache__/
+*.py[cod]
+*.kml
+*.kmz
+*.xlsx
+*.xls
+*.docx
+*.csv
+*.json
+~$*
+.DS_Store
