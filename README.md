@@ -1,6 +1,19 @@
 # KML 鸟类样线记录转换工具
 
-本地运行的 Python 3 工具。把 KML 点标记转换为**待人工复核**的 Excel 鸟类记录表，再把 Excel 按日期和样线整理为 Word 样线数据表。只使用 Python 标准库，不上传数据，也不修改输入文件。
+本地运行的 Python 3 工具。把 KML 点标记转换为**待人工复核**的 Excel 鸟类记录表，并按日期和样线生成 Word 样线数据表。只使用 Python 标准库，不上传数据，也不修改输入文件。
+
+## 一条命令同时生成 Excel 和 Word
+
+在 Windows 终端中进入本工具目录，运行：
+
+```bat
+cd /d F:\Research-Copilot\projects\df12-2-birds\field-data-tool-release
+py -3 kml_to_excel_and_word.py "C:\路径\调查样线.kml"
+```
+
+把第二行引号内改成自己的 KML 路径。程序会打印两个成品的完整路径；两份文件放在同一个 `outputs/` 新子目录。若电脑使用 `python` 命令而非 `py -3`，可将第二行开头改为 `python`。紧凑写法的 KML 可加 `--reference "C:\路径\已有物种表.xlsx"` 以辅助识别物种原文。
+
+也可把 KML 文件拖到 `拖入KML同时生成Excel和Word.cmd` 图标上，得到相同结果。
 
 ## Windows 使用
 
@@ -29,7 +42,8 @@ py -3 excel_to_word.py "C:\path\to\鸟类观测拆分_待复核.xlsx"
 ## 文件
 
 - `kml_to_excel.py`：单个 KML 的便捷入口。
+- `kml_to_excel_and_word.py`：单个 KML 同时生成 Excel、Word 的终端入口。
 - `split_observations.py`：鸟类标记拆分与 Excel 输出。
 - `generate_forms.py`：KML 读取和 Office 文件生成辅助函数。
 - `excel_to_word.py`：Excel 到 Word 样线表。
-- 两个 `.cmd` 文件：Windows 拖放入口。
+- 三个 `.cmd` 文件：Windows 拖放入口。
